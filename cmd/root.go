@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"cli/cmd/db"
+	"github.com/m2keloop/cli/cmd/db"
 	"github.com/spf13/cobra"
 )
 

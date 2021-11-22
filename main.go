@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cli/cmd"
+	"github.com/m2keloop/cli/cmd"
 	"log"
 )
 

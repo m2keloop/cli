@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"cli/internal/word"
+	"github.com/m2keloop/cli/internal/word"
 	"github.com/spf13/cobra"
 	"log"
 	"strings"

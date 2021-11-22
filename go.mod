@@ -1,4 +1,4 @@
-module cli
+module github.com/m2keloop/cli
 
 go 1.16
 
