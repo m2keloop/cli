@@ -7,14 +7,14 @@ import (
 )
 
 const (
-	INSERT_TEMPLATE = `func (c *{{.model}}) {{.model}Create(ctx context.Context, model *model.{{.model}}) (err error) {
-	count, err := GetMassWithContext(ctx).Insert(model)
+	INSERT_TEMPLATE = `func (c *{{.model}}) {{.model}}Create(ctx context.Context, model *model.{{.model}}) (err error) {
+	count, err := getDB(ctx).Insert(model)
 	if err != nil {
 		return
 	}
 
 	if count <= 0 {
-		err = errors.New("insert corporateLog error")
+		err = errors.New("insert {{.model}} error")
 	}
 	return
 }
@@ -25,13 +25,13 @@ const (
 		err = errors.New("Update id can't not nil")
 		return
 	}
-	_, err = getMassDB().Context(ctx).ID(model.Id).Update(model)
+	_, err = getDB().Context(ctx).ID(model.Id).Update(model)
 	return
 }
 
 `
 	GET_TEMPLATE = `func (c *{{.model}}Dao) {{.model}}GetByItem(ctx context.Context, model *model.{{.model}}) (has bool, err error) {
-	has, err = getMassDB().Context(ctx).OrderBy("id desc").Get(model)
+	has, err = getDB().Context(ctx).OrderBy("id desc").Get(model)
 	if err != nil {
 		return
 	}
