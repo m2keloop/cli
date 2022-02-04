@@ -1,0 +1,34 @@
+func (c *{{.model}}) {{.model}}Create(ctx context.Context, model *model.{{.model}}) (err error) {
+	count, err := getDB(ctx).Insert(model)
+	if err != nil {
+		return
+	}
+
+	if count <= 0 {
+		err = errors.New("insert {{.model}} error")
+	}
+	return
+}
+
+func (c *{{.model}}) {{.model}}UpdateByItem(ctx context.Context, model *model.{{.model}}) (err error) {
+	if model.Id <= 0 {
+		err = errors.New("Update {{.model}} id can't not nil")
+		return
+	}
+
+	count, err = getDB().Context(ctx).ID(model.Id).Update(model)
+	if err != nil {
+		return
+	}
+
+	if count <= 0 {
+		err = errors.New("Update {{.model}} by it return 0")
+		return
+	}
+	return
+}
+
+func (c *{{.model}}) {{.model}}GetByItem(ctx context.Context, model *model.{{.model}}) (has bool, err error) {
+	has, err = getDB().Context(ctx).OrderBy("id desc").Get(model)
+	return
+}

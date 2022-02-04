@@ -39,5 +39,5 @@ var timeCmd = &cobra.Command{
 func FormatPrint(time2 time.Time) {
 	format := "2006-01-02 15:04:05"
 	parse := time2.Format(format)
-	fmt.Printf("time:%v", parse)
+	fmt.Printf("time:%v\n", parse)
 }

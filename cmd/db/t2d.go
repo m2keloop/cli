@@ -1,7 +1,9 @@
 package db
 
 import (
+	"errors"
 	"github.com/spf13/cobra"
+	"log"
 	"os"
 	"text/template"
 )
@@ -20,21 +22,27 @@ const (
 }
 
 `
-	UPDATE_TEMPLATE = `func (c *{{.model}}Dao) {{.model}}UpdateByItem(ctx context.Context, model *model.{{.model}}) (err error) {
+	UPDATE_TEMPLATE = `func (c *{{.model}}) {{.model}}UpdateByItem(ctx context.Context, model *model.{{.model}}) (err error) {
 	if model.Id <= 0 {
 		err = errors.New("Update id can't not nil")
 		return
 	}
-	_, err = getDB().Context(ctx).ID(model.Id).Update(model)
+
+	count, err = getDB().Context(ctx).ID(model.Id).Update(model)
+	if err != nil {
+		return
+	}
+
+	if count <= 0 {
+		err = errors.New("Update by it return 0")
+		return
+	}
 	return
 }
 
 `
-	GET_TEMPLATE = `func (c *{{.model}}Dao) {{.model}}GetByItem(ctx context.Context, model *model.{{.model}}) (has bool, err error) {
+	GET_TEMPLATE = `func (c *{{.model}}) {{.model}}GetByItem(ctx context.Context, model *model.{{.model}}) (has bool, err error) {
 	has, err = getDB().Context(ctx).OrderBy("id desc").Get(model)
-	if err != nil {
-		return
-	}
 	return
 }
 
@@ -44,12 +52,29 @@ const (
 
 var tableName string
 
+func init() {
+	t2dCmd.Flags().StringVarP(&tableName, "table", "t", "", "请输入表明")
+}
+
 var t2dCmd = &cobra.Command{
 	Use:   "t2d",
 	Short: "表结构dao生成",
 	Long:  "表结构dao生成",
 	Run: func(cmd *cobra.Command, args []string) {
-		tmpl, err := template.New("t2d").Parse(ALL)
+		var (
+			err error
+		)
+		defer func() {
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
+		if len(tableName) <= 0 {
+			err = errors.New("tableName not null")
+			return
+		}
+
+		tmpl, err := template.ParseFiles("sql.tmpl")
 		if err != nil {
 			return
 		}
@@ -65,7 +90,4 @@ var t2dCmd = &cobra.Command{
 
 func GetCmd() *cobra.Command {
 	return t2dCmd
-}
-func init() {
-	t2dCmd.Flags().StringVarP(&tableName, "table", "t", "", "请输入表明")
 }
