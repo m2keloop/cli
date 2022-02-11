@@ -1,6 +1,7 @@
 package db
 
 import (
+	_ "embed"
 	"errors"
 	"github.com/spf13/cobra"
 	"log"
@@ -50,6 +51,9 @@ const (
 	ALL = INSERT_TEMPLATE + UPDATE_TEMPLATE + GET_TEMPLATE
 )
 
+//go:embed sql.tmpl
+var templateStr string
+
 var tableName string
 
 func init() {
@@ -73,15 +77,15 @@ var t2dCmd = &cobra.Command{
 			err = errors.New("tableName not null")
 			return
 		}
-
-		tmpl, err := template.ParseFiles("sql.tmpl")
+		tmp := template.New("tmp")
+		parse, err := tmp.Parse(templateStr)
 		if err != nil {
 			return
 		}
 		data := map[string]string{
 			"model": tableName,
 		}
-		err = tmpl.Execute(os.Stdout, data)
+		err = parse.Execute(os.Stdout, data)
 		if err != nil {
 			return
 		}
