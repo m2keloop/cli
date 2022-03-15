@@ -1,5 +1,5 @@
-func (c *{{.model}}) {{.model}}Create(ctx context.Context, model *model.{{.model}}) (err error) {
-	count, err := getDB(ctx).Insert(model)
+func {{.model}}Create(ctx context.Context, model *model.{{.model}}) (err error) {
+	count, err := getDB().Context(ctx).Insert(model)
 	if err != nil {
 		return
 	}
@@ -10,25 +10,22 @@ func (c *{{.model}}) {{.model}}Create(ctx context.Context, model *model.{{.model
 	return
 }
 
-func (c *{{.model}}) {{.model}}UpdateByItem(ctx context.Context, model *model.{{.model}}) (err error) {
+func {{.model}}UpdateByItem(ctx context.Context, model *model.{{.model}}) (err error) {
 	if model.Id <= 0 {
 		err = errors.New("Update {{.model}} id can't not nil")
 		return
 	}
 
-	count, err = getDB().Context(ctx).ID(model.Id).Update(model)
+    //xorm return count是影响行数，如果不变更为0，不能抛出error
+	_, err = getDB().Context(ctx).ID(model.Id).Update(model)
 	if err != nil {
 		return
 	}
 
-	if count <= 0 {
-		err = errors.New("Update {{.model}} by it return 0")
-		return
-	}
 	return
 }
 
-func (c *{{.model}}) {{.model}}GetByItem(ctx context.Context, model *model.{{.model}}) (has bool, err error) {
+func {{.model}}GetByItem(ctx context.Context, model *model.{{.model}}) (has bool, err error) {
 	has, err = getDB().Context(ctx).OrderBy("id desc").Get(model)
 	return
 }

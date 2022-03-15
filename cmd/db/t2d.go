@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	INSERT_TEMPLATE = `func (c *{{.model}}) {{.model}}Create(ctx context.Context, model *model.{{.model}}) (err error) {
-	count, err := getDB(ctx).Insert(model)
+	INSERT_TEMPLATE = `func {{.model}}Create(ctx context.Context, model *model.{{.model}}) (err error) {
+	count, err := getDB().Context(ctx).Insert(model)
 	if err != nil {
 		return
 	}
