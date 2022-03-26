@@ -1,3 +1,8 @@
+import (
+	"context"
+	"errors"
+)
+
 func {{.model}}Create(ctx context.Context, model *model.{{.model}}) (err error) {
 	count, err := getDB().Context(ctx).Insert(model)
 	if err != nil {
